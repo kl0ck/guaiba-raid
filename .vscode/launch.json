@@ -6,10 +6,31 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Launch DisplayModeTest",
+            "request": "launch",
+            "mainClass": "com.github.kl0ck.DisplayModeTest",
+            "projectName": "guaiba-raid"
+        },
+        {
+            "type": "java",
+            "name": "Launch MultiBufferTest",
+            "request": "launch",
+            "mainClass": "com.github.kl0ck.MultiBufferTest",
+            "projectName": "guaiba-raid"
+        },
+        {
+            "type": "java",
+            "name": "Launch CapabilitiesTest",
+            "request": "launch",
+            "mainClass": "com.github.kl0ck.CapabilitiesTest",
+            "projectName": "guaiba-raid"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "vmArgs": "-verbose:gc",
+            "vmArgs": "-verbose:gc"
         },
         {
             "type": "java",
@@ -17,7 +38,7 @@
             "request": "launch",
             "mainClass": "com.github.kl0ck.Main",
             "vmArgs": "-verbose:gc",
-            "projectName": "guaiba-raid",
+            "projectName": "guaiba-raid"
         }
     ]
 }
