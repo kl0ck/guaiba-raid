@@ -1,15 +1,22 @@
 package com.github.kl0ck.game;
 
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 
-public abstract class GameObject {
+public class GameObject {
 
-    final BufferedImage img;
-    int x=0, y=0;
+    private final String name;
+    private final BufferedImage img;
+    private double x=0, y=0;
 
-    public GameObject(BufferedImage img) {
+    public GameObject(String name, BufferedImage img) {
+        this.name = name;
         this.img = img;
+    }
+
+    public String name() {
+        return name;
     }
 
     public BufferedImage img() {
@@ -25,19 +32,42 @@ public abstract class GameObject {
     }
 
     public int x() {
-        return x;
+        return (int) Math.round(x);
     }
 
     public int y() {
-        return y;
+        return (int) Math.round(y);
     }
 
-    public void dx(int dx) {
+    public int w() {
+        return img.getWidth();
+    }
+
+    public int h() {
+        return img.getHeight();
+    }
+
+    /** Delta X: deslocamento no eixo X. */
+    public void dx(double dx) {
         x += dx;
     }
 
-    public void dy(int dy) {
+    /** Delta Y: deslocamento no eixo Y. */
+    public void dy(double dy) {
         y += dy;
+    }
+
+    public int centerDX() {
+        return (int) Math.round(w() / 2d);
+    }
+
+    public int centerDY() {
+        return (int) Math.round(h() / 2d);
+    }
+
+    @Override
+    public String toString() {
+        return name + "[x=" + x + ", y=" + y + ", w=" + img.getWidth() + ", h=" + img.getHeight() + "]";
     }
 
 }
