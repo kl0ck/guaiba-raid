@@ -1,6 +1,7 @@
 package com.github.kl0ck.game;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Point;
@@ -29,8 +30,8 @@ public class GameCanvas extends JPanel implements KeyListener {
     private GameObject aviao;
     private GameObject cenario;
     private boolean left, down, right, up;
-    private double dx = 10d, dy = 10d;
-    private long lastPaintMs = 0;
+    private double dx = 3d, dy = 3d;
+    private boolean repaintInProgress = false;
 
     public GameCanvas(Window window) {
         this.window = Objects.requireNonNull(window);
@@ -40,24 +41,32 @@ public class GameCanvas extends JPanel implements KeyListener {
         // Precisa receber foco senão as teclas não funcionam.
         setFocusable(true);
 
-        // Vamos usar BufferStrategy.
-        setDoubleBuffered(false);
-
         aviao = new GameObject("Avião", loadImage("/plane.png"));
     }
 
-    private void gameLoop() {
-        // https://docs.oracle.com/javase/7/docs/api/java/awt/image/BufferStrategy.html
-        BufferStrategy strategy = getBufferStrategy();
+    @Override
+    protected void paintComponent(Graphics graphics) {
+        if (repaintInProgress) {
+            System.out.println("skip repaint");
+            return;
+        }
+        repaintInProgress = true;
 
-        // Render single frame
-        do {
-            // The following loop ensures that the contents of the drawing buffer
-            // are consistent in case the underlying surface was recreated
-            do {
+        long paintStart = System.currentTimeMillis();
+
+        // // https://docs.oracle.com/javase/7/docs/api/java/awt/image/BufferStrategy.html
+        // BufferStrategy strategy = getBufferStrategy();
+
+        // // Render single frame
+        // do {
+        //     // The following loop ensures that the contents of the drawing buffer
+        //     // are consistent in case the underlying surface was recreated
+        //     do {
                 // Get a new graphics context every time through the loop
                 // to make sure the strategy is validated
-                Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+                //Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
+                Graphics2D g = (Graphics2D) graphics;
+                //g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 //g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
                 //g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
 
@@ -71,18 +80,19 @@ public class GameCanvas extends JPanel implements KeyListener {
 
                 Toolkit.getDefaultToolkit().sync();
 
-                // Repeat the rendering if the drawing buffer contents
-                // were restored
-            } while (strategy.contentsRestored());
+        //         // Repeat the rendering if the drawing buffer contents
+        //         // were restored
+        //     } while (strategy.contentsRestored());
 
-            // Display the buffer
-            strategy.show();
+        //     // Display the buffer
+        //     strategy.show();
 
-            // Repeat the rendering if the drawing buffer was lost
-        } while (strategy.contentsLost());
+        //     // Repeat the rendering if the drawing buffer was lost
+        // } while (strategy.contentsLost());
 
-        //System.out.println("paint ms = " + (System.currentTimeMillis() - lastPaintMs));
-        //lastPaintMs = System.currentTimeMillis();
+        //System.out.println("paint ms = " + (System.currentTimeMillis() - paintStart));
+
+        repaintInProgress = false;
     }
 
     // @Override
@@ -128,7 +138,7 @@ public class GameCanvas extends JPanel implements KeyListener {
         // Atualiza posições dos objetos na tela a cada X milissegundos.
         atualizarPosicaoAviao();
 
-        gameLoop();
+        repaint();
     }
 
     private BufferStrategy getBufferStrategy() {

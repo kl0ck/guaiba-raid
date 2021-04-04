@@ -10,9 +10,14 @@ import com.github.kl0ck.game.GameWindow;
 
 public class Main {
 
-    public static final double FPS = 60;
+    public static final double FPS = 200;
+    public static final long FRAME_TIME = Math.round(1000 / FPS);
+
+    public static long lastMs = System.currentTimeMillis();
 
     public static void main(String[] args) {
+        System.out.println("FPS = " + FPS + ", frame time = " + FRAME_TIME + " ms");
+
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -26,15 +31,24 @@ public class Main {
                 // }
                 w.setVisible(true);
 
-                Timer timer = new Timer(true);
-                TimerTask task = new TimerTask(){
+                Runnable loop = new Runnable() {
                     @Override
                     public void run() {
-                        w.canvas().atualizar();
+                        while (true) {
+                            System.out.println("timer ms = " + (System.currentTimeMillis() - lastMs));
+                            w.canvas().atualizar();
+                            lastMs = System.currentTimeMillis();
+                            try {
+                                Thread.sleep(FRAME_TIME);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                     }
                 };
-
-                timer.schedule(task, 0, Math.round(1000 / FPS));
+                Thread thread = new Thread(loop);
+                thread.setDaemon(true);
+                thread.start();
             }
         });
     }
