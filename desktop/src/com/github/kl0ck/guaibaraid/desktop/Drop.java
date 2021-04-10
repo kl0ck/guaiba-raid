@@ -1,4 +1,4 @@
-package com.github.kl0ck.guaibaraid;
+package com.github.kl0ck.guaibaraid.desktop;
 
 import java.util.Iterator;
 
@@ -17,6 +17,9 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 
+/**
+ * Exemplo
+ */
 public class Drop extends ApplicationAdapter {
 
     private Texture dropImage;

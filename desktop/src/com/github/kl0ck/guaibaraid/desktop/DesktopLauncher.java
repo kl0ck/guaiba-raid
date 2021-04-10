@@ -2,7 +2,6 @@ package com.github.kl0ck.guaibaraid.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.github.kl0ck.guaibaraid.Drop;
 import com.github.kl0ck.guaibaraid.GameCanvas;
 
 public class DesktopLauncher {

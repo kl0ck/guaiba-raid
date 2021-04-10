@@ -1,30 +1,29 @@
 package com.github.kl0ck.guaibaraid;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Rectangle;
+
 import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+import java.util.Objects;
 
 public class GameObject {
 
     private final String name;
-    private final BufferedImage img;
-    private double x=0, y=0;
+    private final Texture img;
+    private final Rectangle rect;
 
-    public GameObject(String name, BufferedImage img) {
-        this.name = name;
-        this.img = img;
+    public GameObject(String name, Texture img) {
+        this.name = Objects.requireNonNull(name);
+        this.img = Objects.requireNonNull(img);
+        this.rect = new Rectangle(0, 0, img.getWidth(), img.getHeight());
     }
 
     public String name() {
         return name;
     }
 
-    public BufferedImage img() {
+    public Texture img() {
         return img;
-    }
-
-    public Graphics2D g() {
-        return (Graphics2D) img.getGraphics();
     }
 
     public Dimension size() {
@@ -32,11 +31,11 @@ public class GameObject {
     }
 
     public int x() {
-        return (int) Math.round(x);
+        return Math.round(rect.x);
     }
 
     public int y() {
-        return (int) Math.round(y);
+        return Math.round(rect.y);
     }
 
     public int w() {
@@ -47,14 +46,18 @@ public class GameObject {
         return img.getHeight();
     }
 
+    public Rectangle rect() {
+        return rect;
+    }
+
     /** Delta X: deslocamento no eixo X. */
     public void dx(double dx) {
-        x += dx;
+        rect.x += dx;
     }
 
     /** Delta Y: deslocamento no eixo Y. */
     public void dy(double dy) {
-        y += dy;
+        rect.y += dy;
     }
 
     public int centerDX() {
@@ -67,7 +70,11 @@ public class GameObject {
 
     @Override
     public String toString() {
-        return name + "[x=" + x + ", y=" + y + ", w=" + img.getWidth() + ", h=" + img.getHeight() + "]";
+        return name + "[x=" + rect.x + ", y=" + rect.y + ", w=" + img.getWidth() + ", h=" + img.getHeight() + "]";
+    }
+
+    public void dispose() {
+        img.dispose();
     }
 
 }
