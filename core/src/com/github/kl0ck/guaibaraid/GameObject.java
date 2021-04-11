@@ -11,11 +11,18 @@ public class GameObject {
     private final String name;
     private final Texture img;
     private final Rectangle rect;
+    private boolean visible;
 
     public GameObject(String name, Texture img) {
         this.name = Objects.requireNonNull(name);
         this.img = Objects.requireNonNull(img);
-        this.rect = new Rectangle(0, 0, img.getWidth(), img.getHeight());
+        rect = new Rectangle(0, 0, img.getWidth(), img.getHeight());
+        visible = true;
+    }
+
+    public GameObject(String name, Texture img, boolean visible) {
+        this(name, img);
+        setVisible(visible);
     }
 
     public String name() {
@@ -30,20 +37,28 @@ public class GameObject {
         return new Dimension(img.getWidth(), img.getHeight());
     }
 
-    public int x() {
-        return Math.round(rect.x);
+    public float x() {
+        return rect.x;
     }
 
-    public int y() {
-        return Math.round(rect.y);
+    public float y() {
+        return rect.y;
     }
 
-    public int w() {
-        return img.getWidth();
+    public void setX(float x) {
+        rect.x = x;
     }
 
-    public int h() {
-        return img.getHeight();
+    public void setY(float y) {
+        rect.y = y;
+    }
+
+    public float w() {
+        return rect.width;
+    }
+
+    public float h() {
+        return rect.height;
     }
 
     public Rectangle rect() {
@@ -51,21 +66,29 @@ public class GameObject {
     }
 
     /** Delta X: deslocamento no eixo X. */
-    public void dx(double dx) {
+    public void dx(float dx) {
         rect.x += dx;
     }
 
     /** Delta Y: deslocamento no eixo Y. */
-    public void dy(double dy) {
+    public void dy(float dy) {
         rect.y += dy;
     }
 
-    public int centerDX() {
-        return (int) Math.round(w() / 2d);
+    public float centerDX() {
+        return w() / 2f;
     }
 
-    public int centerDY() {
-        return (int) Math.round(h() / 2d);
+    public float centerDY() {
+        return h() / 2f;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public void setVisible(boolean b) {
+        visible = b;
     }
 
     @Override
