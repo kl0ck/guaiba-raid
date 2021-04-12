@@ -3,28 +3,23 @@ package com.github.kl0ck.guaibaraid;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.github.kl0ck.guaibaraid.utils.Sync;
 
-import java.awt.*;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.logging.Logger;
 
 public class GameCanvas extends ApplicationAdapter {
 
     public static final Logger LOGGER = Logger.getLogger(GameCanvas.class.getName());
-    
-    private static final Color COR_RIO = Color.decode("#66B2FF");
 
     private GameObject player;
-    private GameObject tiros[];
-    private int nextTiro = 0;
+    private GameObject tiro;
+    private Sound tiroSound;
     private GameObject[] helis;
-    private Texture cenario;
+    //private Texture cenario;
     private SpriteBatch batch;
     private Sync sync;
 
@@ -33,16 +28,21 @@ public class GameCanvas extends ApplicationAdapter {
         player = new GameObject("Aviao", new Texture(Gdx.files.internal("aviao.png")));
         player.setX(800/2f - player.centerDX());
 
-        tiros = new GameObject[]{
-                new GameObject("Tiro1", new Texture(Gdx.files.internal("tiro.png")), false),
-                new GameObject("Tiro2", new Texture(Gdx.files.internal("tiro.png")), false),
-        };
+        tiro = new GameObject("Tiro", new Texture(Gdx.files.internal("tiro.png")), false);
+        tiroSound = Gdx.audio.newSound(Gdx.files.internal("shot.wav"));
 
         helis = new GameObject[]{
                 new GameObject("Heli1", new Texture(Gdx.files.internal("heli.png"))),
                 new GameObject("Heli2", new Texture(Gdx.files.internal("heli.png"))),
                 new GameObject("Heli3", new Texture(Gdx.files.internal("heli.png"))),
         };
+
+        int dx = 0;
+        for (GameObject h : helis) {
+            h.setX(100 + dx);
+            h.setY(500);
+            dx += 200;
+        }
 
         batch = new SpriteBatch();
 
@@ -53,18 +53,14 @@ public class GameCanvas extends ApplicationAdapter {
     public void render() {
         ScreenUtils.clear(0, 0.5f, 1.0f, 1.0f);
 
-        sync.sync(60);
-
         batch.begin();
-        int dx = 0;
         for (GameObject h : helis) {
-            batch.draw(h.img(), 100 + h.x() + dx, 500);
-            dx += 200;
-        }
-        for (GameObject t : tiros) {
-            if (t.isVisible()) {
-                batch.draw(t.img(), t.x(), t.y());
+            if (h.isVisible()) {
+                batch.draw(h.img(), h.x(), h.y());
             }
+        }
+        if (tiro.isVisible()) {
+            batch.draw(tiro.img(), tiro.x(), tiro.y());
         }
         batch.draw(player.img(), player.x(), player.y());
         batch.end();
@@ -102,44 +98,53 @@ public class GameCanvas extends ApplicationAdapter {
             atirar();
         }
 
-        moverTiros();
+        moverTiro();
+
+        sync.sync(60);
     }
 
     void atirar() {
-        GameObject tiro = tiros[nextTiro];
-
         if (tiro.isVisible()) {
             return;
         }
 
         tiro.setVisible(true);
-
         tiro.setX(player.x() + player.centerDX());
         tiro.setY(player.y() + player.h());
-
-        nextTiro++;
-
-        if (nextTiro == tiros.length) {
-            nextTiro = 0;
-        }
+        tiroSound.play();
     }
 
-    void moverTiros() {
-        for (GameObject tiro : tiros) {
-            if (!tiro.isVisible()) {
-                continue;
-            }
-            if (tiro.y() > 1000) {
+    void moverTiro() {
+        if (!tiro.isVisible()) {
+            return;
+        }
+
+        if (tiro.y() > 1000) {
+            tiro.setVisible(false);
+            return;
+        }
+
+        tiro.dy(1000 * Gdx.graphics.getDeltaTime());
+
+        for (GameObject h : helis) {
+//                System.out.println(tiro.rect() + ", " + h.rect());
+//                System.out.println("overlap 1: " + tiro.rect().overlaps(h.rect()));
+//                System.out.println("overlap 2: " + h.rect().overlaps(tiro.rect()));
+            if (h.isVisible() && tiro.rect().overlaps(h.rect())) {
                 tiro.setVisible(false);
-                continue;
+                h.setVisible(false);
             }
-            tiro.dy(1000 * Gdx.graphics.getDeltaTime());
         }
     }
 
     @Override
     public void dispose() {
         player.dispose();
+        tiro.dispose();
+        tiroSound.dispose();
+        for (GameObject h : helis) {
+            h.dispose();
+        }
         batch.dispose();
     }
 
